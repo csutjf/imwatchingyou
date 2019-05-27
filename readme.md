@@ -188,6 +188,20 @@ I'll be adding a "Launch debugger" button for sure so that it's trivial for you 
 Watch this space in the future!  COOL SHIT COMING SOON! 
 
 
+## Release Notes
+
+### imwatchingyou 1.1   26-May-2019
+
+* Addition of "Code" line so that things like "import os" can be run from the repl
+
+### imwatchingyou 1.2.1   27-May-2019
+
+* Can press ENTER for both REPL fields and it'll execute them!  NICE
+* Code cleanup
+* STILL under 200 lines of code!  WITH a GUI.
+
+
+
 # Design        
 # Author 
  Mike B.        

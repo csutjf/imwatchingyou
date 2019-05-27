@@ -36,11 +36,10 @@ def _non_user_init():
 
     interactive_frame = [[sg.T('>>> ', size=(9,1), justification='r'), sg.In(size=(83,1), key='_INTERACTIVE_'), sg.B('Go', bind_return_key=True, visible=False)],
                          [sg.T('CODE >>> ',justification='r', size=(9,1)), sg.In(size=(83, 1), key='_CODE_')],
-                          [sg.T('', size=(9,1)), sg.B('Execute Code')],
                          [sg.Multiline(size=(88,12),key='_OUTPUT_',autoscroll=True, do_not_clear=True)],]
 
     layout = [  [sg.Frame('Variables or Expressions to Watch', variables_frame, )],
-                [sg.Frame('REPL-Light', interactive_frame,)],
+                [sg.Frame('REPL-Light - Press Enter To Execute Commands', interactive_frame,)],
                 [sg.Button('All Local Variables',key='_LOCALS_'), sg.Button('Exit')]]
 
     window = sg.Window("I'm Watching You Debugger", layout, icon=PSGDebugLogo).Finalize()
@@ -64,38 +63,43 @@ def _event_once(mylocals, myglobals):
     cmd = values['_INTERACTIVE_']
 
     if event == 'Go':
-        cmd = values['_INTERACTIVE_']
+        cmd_interactive = values['_INTERACTIVE_']
+        cmd_code = values['_CODE_']
+        cmd = cmd_interactive or cmd_code
         watcher_window.Element('_INTERACTIVE_').Update('')
-        watcher_window.Element('_OUTPUT_').Update(">>> {}\n".format(cmd), append=True, autoscroll=True)
-        expression = """
-global myrc
-imwatchingyou.imwatchingyou.myrc = {} """.format(cmd)
-        try:
-            exec(expression, myglobals, mylocals)
-            watcher_window.Element('_OUTPUT_').Update('{}\n'.format(myrc),append=True, autoscroll=True)
-
-        except Exception as e:
-            watcher_window.Element('_OUTPUT_').Update('Exception {}\n'.format(e),append=True, autoscroll=True)
-    if event == 'Execute Code':
-        cmd = values['_CODE_']
         watcher_window.Element('_CODE_').Update('')
         watcher_window.Element('_OUTPUT_').Update(">>> {}\n".format(cmd), append=True, autoscroll=True)
-        expression = """
-{}""".format(cmd)
-        try:
-            exec(expression, myglobals, mylocals)
-            watcher_window.Element('_OUTPUT_').Update('{}\n'.format(cmd), append=True, autoscroll=True)
+        if cmd_interactive:
+            expression = """
+global myrc
+imwatchingyou.imwatchingyou.myrc = {} """.format(cmd)
+            try:
+                exec(expression, myglobals, mylocals)
+                watcher_window.Element('_OUTPUT_').Update('{}\n'.format(myrc),append=True, autoscroll=True)
 
-        except Exception as e:
-            watcher_window.Element('_OUTPUT_').Update('Exception {}\n'.format(e), append=True, autoscroll=True)
+            except Exception as e:
+                watcher_window.Element('_OUTPUT_').Update('Exception {}\n'.format(e),append=True, autoscroll=True)
+        else:
+            cmd = values['_CODE_']
+            watcher_window.Element('_CODE_').Update('')
+            watcher_window.Element('_OUTPUT_').Update(">>> {}\n".format(cmd), append=True, autoscroll=True)
+            expression = """
+{}""".format(cmd)
+            try:
+                exec(expression, myglobals, mylocals)
+                watcher_window.Element('_OUTPUT_').Update('{}\n'.format(cmd), append=True, autoscroll=True)
+
+            except Exception as e:
+                watcher_window.Element('_OUTPUT_').Update('Exception {}\n'.format(e), append=True, autoscroll=True)
 
     elif event.endswith('_DETAIL_'):
+        var = values['_VAR{}_'.format(event[4])]
         expression = """
 global myrc
-imwatchingyou.imwatchingyou.myrc = {} """.format(values['_VAR{}_'.format(event[4])])
+imwatchingyou.imwatchingyou.myrc = {} """.format(var)
         try:
             exec(expression, myglobals, mylocals)
-            sg.PopupScrolled(str(values['_VAR{}_'.format(event[4])]) + '\n' + str(myrc), non_blocking=True)
+            sg.PopupScrolled(str(values['_VAR{}_'.format(event[4])]) + '\n' + str(myrc), title=var, non_blocking=True)
         except:
             print('Detail failed')
     elif event.endswith('_OBJ_'):
@@ -105,7 +109,7 @@ global myrc
 imwatchingyou.imwatchingyou.myrc = {} """.format(var)
         try:
             exec(expression, myglobals, mylocals)
-            sg.PopupScrolled(sg.ObjToStringSingleObj(myrc),non_blocking=True)
+            sg.PopupScrolled(sg.ObjToStringSingleObj(myrc),title=var, non_blocking=True)
         except:
             print('Detail failed')
     elif event == '_LOCALS_' and locals_window is None:
