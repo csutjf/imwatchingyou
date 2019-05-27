@@ -41,6 +41,19 @@ So, don't forget: __You must pip install imwatchingyou in order to use it.__
 
 There are 3 lines of code to add to a program in order to make it debugger ready - The import, an initialization, a refresh function called periodically.  
 
+```python
+import imwatchingyou
+# when you're ready to start the debugger
+imwatchingyou.initialize()
+
+...
+
+# Every now and then, preferably in an event loop, add thi
+imwatchingyou.refresh(locals(),globals())
+
+```
+
+
 Copy and paste these lines of code into your code just as you see them written.  Don't get clever and rename anything.  Don't do an "import as".  Just copy the lines of code.
 
 Here is an entire program including this integration code:
