@@ -215,7 +215,12 @@ Watch this space in the future!  COOL SHIT COMING SOON!
 * there are 45 differences that I don't feel like listing
 * lots of shit changed
 
+     
+### imwatchingyou 1.7.0   28-May-2019  
 
+* User interface change - expect lots of those ahead.  This was a good enough one to make a new release
+* Nice selection interface for auto display
+    * Next is to create a tiny version of this output that is a floating, tiny window
 
 # Design        
 # Author 
