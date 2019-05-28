@@ -51,8 +51,17 @@ def _non_user_init():
                         [sg.T('', size=(WIDTH_VARIABLES,1), key='_WATCH%s_'%i),
                          sg.T('', size=(WIDTH_RESULTS,2), key='_WATCH%s_RESULT_'%i)] for i in range(1,NUM_AUTO_WATCH+1)]
 
-    layout = [  [sg.Frame('Variables or Expressions to Watch', variables_frame, title_color='blue' )],
-                [sg.Frame('REPL-Light - Press Enter To Execute Commands', interactive_frame, title_color='blue' ),sg.Frame('Auto Watches', autowatch_frame, title_color='blue' )],
+    col1 = [
+            [sg.Frame('Auto Watches', autowatch_frame, title_color='blue' )]
+            ]
+
+    col2 = [
+        [sg.Frame('Variables or Expressions to Watch', variables_frame, title_color='blue')],
+         [sg.Frame('REPL-Light - Press Enter To Execute Commands', interactive_frame, title_color='blue'), ]
+            ]
+
+
+    layout = [[sg.Column(col1), sg.Column(col2)],
                 [sg.Button('Exit')]]
 
     window = sg.Window("I'm Watching You Debugger", layout, icon=PSGDebugLogo).Finalize()
