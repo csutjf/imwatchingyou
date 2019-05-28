@@ -41,19 +41,6 @@ So, don't forget: __You must pip install imwatchingyou in order to use it.__
 
 There are 3 lines of code to add to a program in order to make it debugger ready - The import, an initialization, a refresh function called periodically.  
 
-```python
-import imwatchingyou
-# when you're ready to start the debugger
-imwatchingyou.initialize()
-
-...
-
-# Every now and then, preferably in an event loop, add thi
-imwatchingyou.refresh(locals(),globals())
-
-```
-
-
 Copy and paste these lines of code into your code just as you see them written.  Don't get clever and rename anything.  Don't do an "import as".  Just copy the lines of code.
 
 Here is an entire program including this integration code:
@@ -173,22 +160,6 @@ while True:             # Your Event Loop
 window.Close()
 ```
 
-This puts the launching of the debugger firmly into the control of the program being debugged.  Want debugger help?  Then press the debug button.
-
-In the future I want to add a "hotkey" or some other trivial way of launching a debugger from any program that has is running PySimpleGUI.  The only one with real trouble wit this will be the PySimpleGUIWeb one as multiple web windows gets a bit cluttered.
-
-             
-## Requirements
-
-** You'll need to have PySimpleGUI installed.  It will automatically be installed if it is not already installed. **
-
-The debugger itself is written using PySimpleGUI, the tkinter version.  It could be changed to use Qt for example by modifying the pip installed version.  
-
-You MUST run the debugger from the pip installed version.  You cannot download the debugger from the GitHub at this point and use it.
-
-## What's it good for, when should it be used??
-
-Hell if I know.  Maybe it's a terrible idea!  Or, maybe it'll be really helpful, particularly in situations where you don't have many resources on the target system and perhaps you can't fit a debugger onto that system. imwatchingyou provides another tool for your Python toolbox.   
 
 ## The Future
 
@@ -212,6 +183,37 @@ Watch this space in the future!  COOL SHIT COMING SOON!
 * Can press ENTER for both REPL fields and it'll execute them!  NICE
 * Code cleanup
 * STILL under 200 lines of code!  WITH a GUI.
+
+
+### imwatchingyou 1.3.0   27-May-2019
+
+* New "Auto Watcher" feature
+    * New viewing area for these variables
+    * Chosen using a page of checkboxes
+* Other cool shit that I can't recall. Was up coding all night
+* Up to 250 lines of code in total, but I've been extremely inefficient. Can be compacted quite a bit. I went for readability for now.
+    * Still the only 250 lines of Python code, real-time, GUI, watcher with REPL that you'll find anywhere
+
+### imwatchingyou 1.4.1   27-May-2019
+
+* Forgot release notes
+
+### imwatchingyou 1.5.0   28-May-2019
+
+* Lots of nice code cleanup
+* Rework of auto-watching
+    * Clear capability in 2 places
+    * Can cancel out of choosing to make changes
+    * Confirmation when choosing to clear auto-watches in main interface
+    * Choose autowatches now has a "real event loop"... it also means it BLOCKS waiting on your choices
+* Shows non-blocking, "Message" when clearing checkboxes
+     
+### imwatchingyou 1.6.0   28-May-2019  
+
+* No more globals!  Cheating and using a class instead. Same diff
+* Working of all interfaces is the best way to sum it up
+* there are 45 differences that I don't feel like listing
+* lots of shit changed
 
 
 
