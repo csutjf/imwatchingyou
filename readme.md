@@ -118,17 +118,20 @@ window.Close()
 There are 2 primary GUI windows the debugger has to show.
 1. A small "Popout" window that floats on top of your other windows
 
-![SNAG-0388](https://user-images.githubusercontent.com/13696193/58594980-2cef3180-823d-11e9-807f-7d7076dfe0d9.jpg)
+
+![image](https://user-images.githubusercontent.com/13696193/58755720-66cb6c80-84b7-11e9-892d-c25821324f38.png)
+
 
 2. The primary "Debugger" window is like 2 windows in 1 because of the use of a 'Pane' element that allow the entire window's contents to be replaced by other layout.
 
 This is the "main debugger" window that shows variables, etc
 
-![SNAG-0384](https://user-images.githubusercontent.com/13696193/58594982-2cef3180-823d-11e9-9288-dd94e72b8962.jpg)
+![image](https://user-images.githubusercontent.com/13696193/58755706-3388dd80-84b7-11e9-9f70-f5ba5a87df3c.png)
 
-The is the REPL portion of the debugger  You can also examine objects in detail on this page using the "Obj" button
 
-![SNAG-0385](https://user-images.githubusercontent.com/13696193/58594981-2cef3180-823d-11e9-84f4-0e48223b1a3c.jpg)
+The is the REPL portion of the debugger  You can also examine objects in detail on this page using the "Obj" button.  This feature is currently broken / crippled.  Will be turning attention to it shortly
+
+![image](https://user-images.githubusercontent.com/13696193/58755712-4d2a2500-84b7-11e9-89e8-9324de492534.png)
 
 
 
@@ -245,6 +248,15 @@ has happened in a short period of time.  Major new functionality AND it breaks t
     * Can be easily shown with `imwatchingyou.show_popout_window()`
 * Every call to `refresh()` will automatically refresh the list of available varaiables along with the values
 
+
+
+### imwatchingyou 2.1.0  -  01-June-2019  
+
+* TONS of changes
+* Mostly centered around the use of Debugger class
+* Different features than in the built-in version.
+* Need to continue to make changes so that the exact same code can be used by PySimpleGUI itself for the internal debugger.  This will enable a copy and paste.
+* Over 60 changes in this release.... let's all keep our fingers crossed
 
 
 # Design        
