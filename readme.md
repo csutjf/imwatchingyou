@@ -4,29 +4,24 @@
 It's 2019 and this project is still actively developed.
 
 # imwatchingyou
-## A real-time Python debugger.  
-## Watch your program work without interrupting flow or its operation 
+## A "live" Python debugger.  
+## Watch your program work without stopping its operation or flow 
 
-![SNAG-0390](https://user-images.githubusercontent.com/13696193/58595929-3fb73580-8240-11e9-9865-7443d04b8f56.jpg)
-
-  
-# Version 2.
-
-Sorry if you were one of the early users and have had to endure shifting API calls.  Thankfully there have never been more than 3 calls to the entire SDK.  There continues to be 3 and they've gotten significantly easier for the user to use.
-
-This should be the last time you will have to endure a set of API changes as drastic as these have been. Software development is an iterative thing you know.               
+![Many debugger windows 2](https://user-images.githubusercontent.com/13696193/59168455-d10d8e00-8b03-11e9-8aa7-cb3bf359b7a5.jpg)
+         
         
 # imwatchingyou     
 
-A "debugger" that's based on.  It was developed to help debug PySimpleGUI based programs, but it can be used to debug any program.  The only "hard requirement" is that a `refresh()` function be called on a "periodic basis".
+A "live debugger".  It was developed to help debug PySimpleGUI based programs, but it can be used to debug any program including non-GUI programs.  PySimpleGUI is the only requirement.  
 
-What you can do with this "debugger" is:
-* Set "watch points" that update in realtime
+With this "debugger" you can:
+* Set "variable watches" that update in realtime
 * Write expressions / code that update in realtime
-* Use a REPL style prompt to type in "code" / modify variables
+* Use a REPL style prompt to type in "code", expressions, and modify variables
 
-All of this is done using a secondary and separate windows from your primary application window.  
+All of this is done using separate windows from your primary application.  
 
+![Many debugger windows 1](https://user-images.githubusercontent.com/13696193/59168453-d10d8e00-8b03-11e9-984a-6452005da7bc.jpg)
         
 ## Installation
 
@@ -39,7 +34,7 @@ or if you need to upgrade later:
 `pip install --upgrade --no-cache-dir imwatchingyou`
 
 
-Note that you need to install the debugger using pip rather than downloading.  There are some detailed technical reasons for this.  
+Note that you __MUST__ install the debugger using pip rather than downloading.  There are some detailed technical reasons for this.  
 
 So, don't forget: __You must pip install imwatchingyou in order to use it.__
 
@@ -47,22 +42,20 @@ So, don't forget: __You must pip install imwatchingyou in order to use it.__
 
 ## Integrating imwatchingyou Into Your Application
 
-There are 3 lines of code to add to a program in order to make it debugger ready - The import, an initialization, a refresh function called periodically.  
+There are 3 lines of code to add to a program in order to make it debugger ready - The import, a "show debugger window" call, and a "refresh debugger windows" call.
 
-Copy and paste these lines of code into your code just as you see them written.  Don't get clever and rename anything.  Don't do an "import as".  Just copy the lines of code.
-
-Here is an entire program including this integration code:
+Here is an entire program that is debugged using `imwatchingyou`:
 
 ```python
 import PySimpleGUI as sg
-import imwatchingyou            # STEP 1
+import imwatchingyou  # STEP 1
 
 """
     Demo program that shows you how to integrate the PySimpleGUI Debugger
     into your program.
     This particular program is a GUI based program simply to make it easier for you to interact and change
     things.
-    
+
     In this example, the debugger is not started initiallly. You click the "Debug" button to launch it
     There are THREE steps, and they are copy and pastes.
     1. At the top of your app to debug add
@@ -76,38 +69,36 @@ import imwatchingyou            # STEP 1
 """
 
 layout = [
-            [sg.T('A typical PSG application')],
-            [sg.In(key='_IN_')],
-            [sg.T('        ', key='_OUT_', size=(30,1))],
-            [sg.Radio('a',1, key='_R1_'), sg.Radio('b',1, key='_R2_'), sg.Radio('c',1, key='_R3_')],
-            [sg.Combo(['c1', 'c2', 'c3'], size=(6,3), key='_COMBO_')],
-            [sg.Output(size=(50,6))],
-            [sg.Ok(), sg.Exit(), sg.Debugger(key='Debug')],
-        ]
+    [sg.T('A typical PSG application')],
+    [sg.In(key='_IN_')],
+    [sg.T('        ', key='_OUT_', size=(30, 1))],
+    [sg.Radio('a', 1, key='_R1_'), sg.Radio('b', 1, key='_R2_'), sg.Radio('c', 1, key='_R3_')],
+    [sg.Combo(['c1', 'c2', 'c3'], size=(6, 3), key='_COMBO_')],
+    [sg.Output(size=(50, 6))],
+    [sg.Ok(), sg.Exit(), sg.Button('Debug'), sg.Button('Popout')],
+]
 
 window = sg.Window('This is your Application Window', layout)
 
 counter = 0
 timeout = 100
 
-# Start the program with the popout window showing so you can immediately start debugging!
-imwatchingyou.show_popout_window()
-
-while True:             # Your Event Loop
+while True:  # Your Event Loop
     event, values = window.Read(timeout=timeout)
     if event in (None, 'Exit'):
         break
     elif event == 'Ok':
         print('You clicked Ok.... this is where print output goes')
-        imwatchingyou.show_popout_window()  # STEP 2 also
     elif event == 'Debug':
-        imwatchingyou.show_debug_window()   # STEP 2
+        imwatchingyou.show_debugger_window()  # STEP 2
+    elif event == 'Popout':
+        imwatchingyou.show_debugger_popout_window()  # STEP 2
     counter += 1
     # to prove window is operating, show the input in another area in the window.
     window.Element('_OUT_').Update(values['_IN_'])
 
     # don't worry about the "state" of things, just call this function "frequently"
-    imwatchingyou.refresh()                 # STEP 3 - refresh debugger
+    imwatchingyou.refresh_debugger()  # STEP 3 - refresh debugger
 
 window.Close()
 
@@ -116,24 +107,51 @@ window.Close()
 ## Showing the debugger
 
 There are 2 primary GUI windows the debugger has to show.
-1. A small "Popout" window that floats on top of your other windows
+
+### The Primary Debug Window
+
+The main debug window is displayed by calling:
+`imwatchingyou.show_debugger_window()`
+
+This will display the Primary / Main Debug Window, starting on its "Variables" Tab. The main debug window has 2 tabs one for variable watches the other for REPL and expression watches.
+
+#### Variables Tab
+
+![Maiun Debug](https://user-images.githubusercontent.com/13696193/59168170-a5d66f00-8b02-11e9-823e-92921b70a5b8.jpg)
 
 
-![image](https://user-images.githubusercontent.com/13696193/58755720-66cb6c80-84b7-11e9-892d-c25821324f38.png)
+Like _*all*_ of the `imwatchingyou` debugger windows, this window is refreshed every time *your application* calls the refresh function `imwatchingyou.refresh_debugger()`
 
+Here you can see up to 8 of your variables and one custom expression.  You select which of your variables to see using the "Choose Variables To Auto Watch" buttton.  This will bring up this selection window:
 
-2. The primary "Debugger" window is like 2 windows in 1 because of the use of a 'Pane' element that allow the entire window's contents to be replaced by other layout.
+![Choose Auto Watches](https://user-images.githubusercontent.com/13696193/59168165-a4a54200-8b02-11e9-98b1-cae48366d404.jpg)
 
-This is the "main debugger" window that shows variables, etc
+Use this window to check the variables you want to "watch" on the debug screen.  This is also where you type in your custom watch.
 
-![image](https://user-images.githubusercontent.com/13696193/58755706-3388dd80-84b7-11e9-9f70-f5ba5a87df3c.png)
-
+#### REPL Tab
 
 The is the REPL portion of the debugger  You can also examine objects in detail on this page using the "Obj" button.  This feature is currently broken / crippled.  Will be turning attention to it shortly
 
 ![image](https://user-images.githubusercontent.com/13696193/58755712-4d2a2500-84b7-11e9-89e8-9324de492534.png)
 
 
+
+### Popout Debug Window
+
+The "Popout Debug Window" is the small "Popout" window that floats on top of your other windows and is located in the upper right corner of your display.
+
+![Popout with right click menu](https://user-images.githubusercontent.com/13696193/59168172-a66f0580-8b02-11e9-8c72-ea79799e70ea.jpg)
+
+Note that this popout window is created in the upper right corner of your screen.
+
+If you right click this window's text (anything that is text), you'll bring up the right click menu which can be used to close the window or to open the main debug window.
+
+![Popout](https://user-images.githubusercontent.com/13696193/59168173-a7079c00-8b02-11e9-81f4-ff1cc9b639dd.jpg)
+
+
+This Popout window is displayed in either of these 2 manners:
+ * by clicking the "Popout" button from the Main Debug Window
+ * by calling `imwatchingyou.show_debugger_popout_window()`
 
 
 ### Refreshing the debugger
@@ -144,28 +162,23 @@ If debugginer a PySimpleGUI based application, this "refresh" call that must be 
 
 If you are debugging a non-PySimpleGUI program, no problem, just put this call __somewhere that it will be called several times a second__.  Or say once a second at minimum.  This frequency will determine how quickly the variable values will change in your debug windows.
 
-Add this line to the top of your event loop.
-`imwatchingyou.refresh(locals(), globals())`
+Add this line to the top of your event loop:
+
+`imwatchingyou.refresh_debugger()`
 
 
 ### Accessing the debugger windows
 
 Your task is to devise a way for your appliction to call the needed 2 or 3 functions.  
 
-If you're making a GUI program, then make a hotkey or a button that will call `imwatchingyou.show_debugger()` and you're off to the races!
+If you're making a GUI program, then make a hotkey or a button that will call `imwatchingyou.show_debugger_window()` and you're off to the races!  You can use the main debugger window to launch the smaller "Popout" variable window.  
 
-Or maybe call the `show_popout_window` at the start of your program and forget about it.  Look up at it when yuo want to see the current value of a variable, but ignore it the rest of the time.
+Or maybe call `imwatchingyou.show_debugger_popout_window()` after the action gets started in your program and then forget about it, glancing up at the window in the corner of your desktop for  the current values of all your variables.
 
 
 ## The Future
 
-LOTS of plans for this debugger in the future.  One of the immediate things I want to do is to integrate this into the PySimpleGUI.py file itself.  To include the debugger with the SDK so that it doesn't have to be installed.
-
-This will enable the use of a "hotkey" or other mechanism to "magically launch" the debugger.  
-
-I'll be adding a "Launch debugger" button for sure so that it's trivial for you to add this capability to your code.  
-
-Watch this space in the future!  COOL SHIT COMING SOON! 
+Have been working on a version that is integrated direcetly into PySimpleGUI itself (only the tktiner version) that is not officially up and running.
 
 
 ## Release Notes
@@ -257,6 +270,19 @@ has happened in a short period of time.  Major new functionality AND it breaks t
 * Different features than in the built-in version.
 * Need to continue to make changes so that the exact same code can be used by PySimpleGUI itself for the internal debugger.  This will enable a copy and paste.
 * Over 60 changes in this release.... let's all keep our fingers crossed
+
+
+### imwatchingyou 2.2.2  -  09-June-2019  
+
+* Hopefully the "last" release for a while
+* Changed floating to 4 lines max per variable
+* Changed to 9 auto watches
+* Starts debug window with all locals chosen that don't start with _
+* Removed the fullname function
+* Added comments
+* Moved the `debug` sole global variable into a class variable
+* Automatically create the debug class instance when any show or refresh call is made (no init needed!)
+
 
 
 # Design        
